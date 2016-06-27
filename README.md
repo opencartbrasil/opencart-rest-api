@@ -108,6 +108,30 @@ Para mais informações sobre todas as funcionalidades da API, incluindo pagina�
 
 [MANUAL DO PHP-CRUD-API](https://github.com/mevdschee/php-crud-api/blob/master/README.md)
 
+### Exemplo de acesso externo a API REST do OpenCart:
+
+#### - Em PHP:
+
+```php
+<?php
+$headers = array();
+$headers[] = 'Content-Type: application/json';
+$headers[] = 'key: mMAnvMIaP7zPHnF7hBi23ebGyIU6sp2eWRfdi08yNWOo8wRXPAWgCol'; // // Replace Key Value (Only numbers and letters)
+
+$ch = curl_init();
+curl_setopt_array($ch, [
+	CURLOPT_URL            => 'http://www.seudominio.com.br/api.php/oc_product/', // Replace domain and table prefix
+	CURLOPT_HTTPHEADER     => $headers,
+	CURLOPT_CUSTOMREQUEST  => 'GET',
+	CURLOPT_RETURNTRANSFER => true,
+	CURLOPT_SSL_VERIFYHOST => false,
+	CURLOPT_SSL_VERIFYPEER => false
+]);
+$out = curl_exec($ch);
+curl_close($ch);
+print_r( $out ); // Result json
+```
+
 ### Como contribuir
 
  1. Faça um Fork do projeto e edite os arquivos que desejar.
