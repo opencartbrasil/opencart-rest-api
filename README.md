@@ -10,11 +10,17 @@ Caso deseje doar um valor para contribuir com este trabalho continuo e sempre gr
 
 [![alt tag](https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7G9TR9PXS6G5J)
 
+### Requisitos
+
+ 1. PHP 5.3 ou superior.
+ 2. Biblioteca PDO habilitada no PHP.
+ 3. OpenCart 2.1 ou superior.
+
 ### Instalação
 
- 1. Baixe a API no link: https://github.com/opencartbrasil/opencart-rest-api/archive/master.zip
- 2. Após baixar, descompacte o conteúdo do arquivo zip e localize os arquivos "api.php" e "config_api.php".
- 3. Envie os arquivo "api.php" e "config_api.php" para o diretório raiz onde está instalado o OpenCart.
+ 1. Baixe a API no link: https://github.com/opencartbrasil/opencart-rest-api/releases. Localize a versão mais atual e compatível com sua versão do OpenCart, do arquivo "opencart-rest-api.ocmod.zip".
+ 2. Na administração da loja acesse o menu Extensions->Extension Installer (Extensões->Instalador).
+ 3. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
  
 ### Configuração
 
