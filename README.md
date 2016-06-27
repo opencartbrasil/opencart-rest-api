@@ -1,6 +1,8 @@
 ### Resumo
 
-API REST para OpenCart 2.1 ou superior, com gerenciamento de acesso controlado por Chave da API cadastrada na administração do OpenCart.
+API REST para OpenCart 2.1 ou superior, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
+
+O controle de acesso a API REST é feito através da Chave da API que é cadastrada na administração do OpenCart.
 
 Projetos incluídos:
 
@@ -62,7 +64,7 @@ Altere para:
 define('SESSION_LOG', true);
 ```
 
-E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações->Gerenciar Usuários->API, localize a API com o nome "REST API", clique no botão "Editar", e clique na aba "Sessão".
+E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações->Gerenciar Usuários->API, localize a API com o nome "API REST", clique no botão "Editar", e clique na aba "Sessão".
 
 ### Utilização
 
@@ -86,9 +88,9 @@ Caso contrário você receberá a mensagem de erro:
 {"API Error":"Key not found!"}
 ```
 
-### URLs da API
+### URLs de acesso a API REST
 
-Qualquer tabela do banco de dados estará acessivel pela API, independente de ser nativa ou não do OpenCart.
+Qualquer tabela do banco de dados estará acessivel pela API, independente de ser nativa ou não do OpenCart, para acessar os dados ou enviar dados, deve-se solicitar ou enviar requisições HTTP utilizando os verbos GET, POST, PUT ou DELETE.
 
 No exemplo abaixo, solicitamos todos os dados de produtos da tabela oc_product:
 
