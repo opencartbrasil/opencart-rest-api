@@ -4,37 +4,37 @@ API REST para OpenCart 2.1 ou superior, que permite o acesso a todas as tabelas 
 
 O controle de acesso a API REST é feito através da Chave da API que é cadastrada na administração do OpenCart.
 
-Projetos incluídos:
+Projetos incluídos (Related projects):
 
-  - [PHP-CRUD-API](https://github.com/mevdschee/php-crud-api): Script PHP que adiciona uma API REST com acesso direto ao Banco de dados.
+  - [PHP-CRUD-API](https://github.com/mevdschee/php-crud-api): Script PHP que adiciona uma API REST com acesso direto ao Banco de dados (Single file PHP script that adds a REST API).
 
 Caso deseje doar um valor para contribuir com este trabalho continuo e sempre gratuito, clique no botão abaixo:
 
 [![alt tag](https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7G9TR9PXS6G5J)
 
-### Requisitos
+### Requisitos (Requirements)
 
  1. PHP 5.3 ou superior.
  2. Biblioteca PDO habilitada no PHP.
  3. OpenCart 2.1 ou superior.
 
-### Instalação
+### Instalação (Installation)
 
- 1. Baixe a API no link: https://github.com/opencartbrasil/opencart-rest-api/releases. Localize a versão mais atual e compatível com sua versão do OpenCart, do arquivo "opencart-rest-api.ocmod.zip".
+ 1. Faça o download da API no link: https://github.com/opencartbrasil/opencart-rest-api/releases. Localize a versão mais atual e compatível com sua versão do OpenCart, do arquivo "opencart-rest-api.ocmod.zip".
  2. Na administração da loja acesse o menu Extensions->Extension Installer (Extensões->Instalador).
  3. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
  
-### Configuração
+### Configuração (Configuration)
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API.
- 2. Clique no botão "Novo", no campo "Nome da API" coloque "API REST", logo abaixo, clique no botão "Gerar" para criar sua "Chave da API", no campo "Situação" selecione a opção "Habilitar", e clique no botão "Salvar".
+ 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API (System->Users->API).
+ 2. Clique no botão "Novo" (Add New), no campo "Nome da API" (API Name) coloque "API REST", logo abaixo, clique no botão "Gerar" (Generate) para criar sua "Chave da API", no campo "Situação" (Status) selecione a opção "Habilitar" (Enabled), e clique no botão "Salvar" (Save).
  
-### Configurações extras
+### Configurações extras (Extra Configuration)
 
-#### Restringir o acesso a API por IP cadastrado através da administração da loja OpenCart:
+#### Restringir o acesso a API por IP cadastrado através da administração da loja OpenCart (Restrict access IP):
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API.
- 2. Localize a API com o nome "API REST", clique no botão "Editar", clique na aba "Endereço IP", clique no botão "Adicionar IP", adicione o IP que você deseja que tenha acesso a API, e clique no botão "Salvar".
+ 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API (System->Users->API).
+ 2. Localize a API com o nome "API REST", clique no botão "Editar" (Edit), clique na aba "Endereço IP" (IP Addresses), clique no botão "Adicionar IP" (Add IP), adicione o IP que você deseja que tenha acesso a API, e clique no botão "Salvar" (Save).
  
 Edite o arquivo "config_api.php", e localize a linha:
 
@@ -50,7 +50,7 @@ define('RESTRICT_IP', true);
 
 E salve as alterações no arquivo.
 
-#### Gravar no log de sessões da API do OpenCart, os acessos feitos através da API:
+#### Gravar no log de sessões da API do OpenCart os acessos feitos através da API (Log Access API):
 
 Edite o arquivo "config_api.php", e localize a linha:
 
@@ -64,9 +64,9 @@ Altere para:
 define('SESSION_LOG', true);
 ```
 
-E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações->Gerenciar Usuários->API, localize a API com o nome "API REST", clique no botão "Editar", e clique na aba "Sessão".
+E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações->Gerenciar Usuários->API (System->Users->API), localize a API com o nome "API REST", clique no botão "Editar" (Edit), e clique na aba "Sessão" (Session).
 
-### Utilização
+### Utilização (Usage)
 
 Acesse a URL da sua loja, incluindo no final o arquivo api.php, conforme o exemplo:
 
@@ -88,9 +88,17 @@ Caso contrário você receberá a mensagem de erro:
 {"API Error":"Key not found!"}
 ```
 
-### URLs de acesso a API REST
-
 Qualquer tabela do banco de dados estará acessivel pela API, independente de ser nativa ou não do OpenCart, para acessar os dados ou enviar dados, deve-se solicitar ou enviar requisições HTTP utilizando os verbos GET, POST, PUT ou DELETE.
+
+As URLs são formadas seguindo o padrão (The URLs are formed following the pattern):
+
+```http
+http://dominio/api.php/nome_tabela/{id} 
+```
+
+```http
+http://domain/api.php/table_name/{id}
+```
 
 No exemplo abaixo, solicitamos todos os dados de produtos da tabela oc_product:
 
@@ -104,23 +112,23 @@ Neste outro exemplo, solicitamos os dados do produto com a coluna product_id igu
 GET http://www.seudominio.com.br/api.php/oc_product/40
 ```
 
-Para mais informações sobre todas as funcionalidades da API, incluindo paginação, ordem de exibição, etc, acesse:
+#### Documentação completa (Documentation)
 
 [MANUAL DO PHP-CRUD-API](https://github.com/mevdschee/php-crud-api/blob/master/README.md)
 
-### Exemplo de acesso externo a API REST do OpenCart:
+### Acesso a API REST do OpenCart (Access to the REST API OpenCart)
 
-#### - Em PHP:
+#### - Em PHP (PHP Script):
 
 ```php
 <?php
 $headers = array();
 $headers[] = 'Content-Type: application/json';
-$headers[] = 'key: mMAnvMIaP7zPHnF7hBi23ebGyIU6sp2eWRfdi08yNWOo8wRXPAWgCol'; // // Replace Key Value (Only numbers and letters)
+$headers[] = 'key: mMAnvMIaP7zPHnF7hBi23ebGyIU6sp2eWRfdi08yNWOo8wRXPAWgCol'; // // Replace key value for API key OpenCart (Only numbers and letters)
 
 $ch = curl_init();
 curl_setopt_array($ch, [
-	CURLOPT_URL            => 'http://www.seudominio.com.br/api.php/oc_product/', // Replace domain and table prefix
+	CURLOPT_URL            => 'http://www.seudominio.com.br/api.php/oc_product/', // Replace domain and table name
 	CURLOPT_HTTPHEADER     => $headers,
 	CURLOPT_CUSTOMREQUEST  => 'GET',
 	CURLOPT_RETURNTRANSFER => true,
