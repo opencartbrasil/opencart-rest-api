@@ -1,4 +1,6 @@
 <?php
+//var_dump($_SERVER['REQUEST_METHOD'],$_SERVER['PATH_INFO']); die();
+
 interface DatabaseInterface {
 	public function getSql($name);
 	public function connect($hostname,$username,$password,$database,$port,$socket,$charset);
@@ -652,6 +654,8 @@ class SQLite implements DatabaseInterface {
 		}
 		$version = $this->db->querySingle('pragma schema_version');
 		if ($version != $this->db->querySingle('SELECT "version" from "sys/version"')) {
+			// reflection may take a while
+			set_time_limit(3600);
 			// update version data
 			$this->query('DELETE FROM "sys/version"');
 			$this->query('INSERT into "sys/version" ("version") VALUES (?)',array($version));
@@ -1390,7 +1394,9 @@ class PHP_CRUD_API {
 					echo '"'.$field.'":"'.implode('.',$path).'"';
 				}
 				echo '}';
-				$this->addWhereFromFilters($filters[$table],$sql,$params);
+				if (isset($filters[$table])) {
+					$this->addWhereFromFilters($filters[$table],$sql,$params);
+				}
 			}
 			if ($result = $this->db->query($sql,$params)) {
 				if (isset($select[$table])) echo ',';
@@ -1645,7 +1651,7 @@ class PHP_CRUD_API {
 		}
 		$tables = array_merge(array_filter($tables));
 		//var_dump($tables);die();
-		/*
+
 		header('Content-Type: application/json; charset=utf-8');
 		echo '{"swagger":"2.0",';
 		echo '"info":{';
@@ -1896,8 +1902,6 @@ class PHP_CRUD_API {
 		}
 		echo '}';
 			echo '}';
-		*/
-
 	}
 
 	public function executeCommand() {
@@ -1918,8 +1922,49 @@ class PHP_CRUD_API {
 			}
 		}
 	}
+
 }
 
-if (is_file('config_api.php')) {
-	require_once('config_api.php');
-}
+// uncomment the lines below when running in stand-alone mode:
+
+// $api = new PHP_CRUD_API(array(
+// 	'dbengine'=>'MySQL',
+// 	'hostname'=>'localhost',
+//	'username'=>'xxx',
+//	'password'=>'xxx',
+//	'database'=>'xxx',
+// 	'charset'=>'utf8'
+// ));
+// $api->executeCommand();
+
+// For Microsoft SQL Server 2012 use:
+
+// $api = new PHP_CRUD_API(array(
+// 	'dbengine'=>'SQLServer',
+// 	'hostname'=>'(local)',
+// 	'username'=>'',
+// 	'password'=>'',
+// 	'database'=>'xxx',
+// 	'charset'=>'UTF-8'
+// ));
+// $api->executeCommand();
+
+// For PostgreSQL 9 use:
+
+// $api = new PHP_CRUD_API(array(
+// 	'dbengine'=>'PostgreSQL',
+// 	'hostname'=>'localhost',
+// 	'username'=>'xxx',
+// 	'password'=>'xxx',
+// 	'database'=>'xxx',
+// 	'charset'=>'UTF8'
+// ));
+// $api->executeCommand();
+
+// For SQLite 3 use:
+
+// $api = new PHP_CRUD_API(array(
+// 	'dbengine'=>'SQLite',
+// 	'database'=>'data/blog.db',
+// ));
+// $api->executeCommand();
