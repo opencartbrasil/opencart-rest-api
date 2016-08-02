@@ -1,6 +1,4 @@
 <?php
-//var_dump($_SERVER['REQUEST_METHOD'],$_SERVER['PATH_INFO']); die();
-
 interface DatabaseInterface {
 	public function getSql($name);
 	public function connect($hostname,$username,$password,$database,$port,$socket,$charset);
@@ -117,7 +115,6 @@ class MySQL implements DatabaseInterface {
 			if ($param===null) return 'NULL';
 			return "'".mysqli_real_escape_string($db,$param)."'";
 		}, $sql);
-		//if (!strpos($sql,'INFORMATION_SCHEMA'))	echo "\n$sql\n";
 		return mysqli_query($db,$sql);
 	}
 
@@ -155,7 +152,6 @@ class MySQL implements DatabaseInterface {
 	}
 
 	public function isBinaryType($field) {
-		//echo "$field->name: $field->type ($field->flags)\n";
 		return (($field->flags & 128) && ($field->type>=249) && ($field->type<=252));
 	}
 
@@ -307,7 +303,6 @@ class PostgreSQL implements DatabaseInterface {
 		if (strtoupper(substr($sql,0,6))=='INSERT') {
 			$sql .= ' RETURNING id;';
 		}
-		//echo "\n$sql\n";
 		return @pg_query($db,$sql);
 	}
 
@@ -485,7 +480,6 @@ class SQLServer implements DatabaseInterface {
 			if ($matches[0]=='!') {
 				return preg_replace('/[^a-zA-Z0-9\-_=<> ]/','',$param);
 			}
-			// This is workaround because SQLSRV cannot accept NULL in a param
 			if ($matches[0]=='?' && is_null($param)) {
 				return 'NULL';
 			}
@@ -503,10 +497,6 @@ class SQLServer implements DatabaseInterface {
 			$args[] = $param;
 			return '?';
 		}, $sql);
-		//var_dump($params);
-		//echo "\n$sql\n";
-		//var_dump($args);
-		//file_put_contents('sql.txt',"\n$sql\n".var_export($args,true)."\n",FILE_APPEND);
 		if (strtoupper(substr($sql,0,6))=='INSERT') {
 			$sql .= ';SELECT SCOPE_IDENTITY()';
 		}
@@ -541,7 +531,6 @@ class SQLServer implements DatabaseInterface {
 
 	public function fetchFields($table) {
 		$result = $this->query('SELECT * FROM "!" WHERE 1=2;',array($table));
-		//var_dump(sqlsrv_field_metadata($result));
 		return array_map(function($a){
 			$p = array();
 			foreach ($a as $k=>$v) {
@@ -641,12 +630,10 @@ class SQLite implements DatabaseInterface {
 
 	public function connect($hostname,$username,$password,$database,$port,$socket,$charset) {
 		$this->db = new SQLite3($database);
-		// optimizations
 		$this->db->querySingle('PRAGMA synchronous = NORMAL');
 		$this->db->querySingle('PRAGMA foreign_keys = on');
 		$reflection = $this->db->querySingle('SELECT name FROM sqlite_master WHERE type = "table" and name like "sys/%"');
 		if (!$reflection) {
-			//create reflection tables
 			$this->query('CREATE table "sys/version" ("version" integer)');
 			$this->query('CREATE table "sys/tables" ("name" text)');
 			$this->query('CREATE table "sys/columns" ("self" text,"cid" integer,"name" text,"type" integer,"notnull" integer,"dflt_value" integer,"pk" integer)');
@@ -654,12 +641,9 @@ class SQLite implements DatabaseInterface {
 		}
 		$version = $this->db->querySingle('pragma schema_version');
 		if ($version != $this->db->querySingle('SELECT "version" from "sys/version"')) {
-			// reflection may take a while
 			set_time_limit(3600);
-			// update version data
 			$this->query('DELETE FROM "sys/version"');
 			$this->query('INSERT into "sys/version" ("version") VALUES (?)',array($version));
-			// update tables data
 			$this->query('DELETE FROM "sys/tables"');
 			$result = $this->query('SELECT * FROM sqlite_master WHERE type = "table" and name not like "sys/%" and name<>"sqlite_sequence"');
 			$tables = array();
@@ -667,7 +651,6 @@ class SQLite implements DatabaseInterface {
 				$tables[] = $row['name'];
 				$this->query('INSERT into "sys/tables" ("name") VALUES (?)',array($row['name']));
 			}
-			// update columns and foreign_keys data
 			$this->query('DELETE FROM "sys/columns"');
 			$this->query('DELETE FROM "sys/foreign_keys"');
 			foreach ($tables as $table) {
@@ -699,7 +682,6 @@ class SQLite implements DatabaseInterface {
 			if ($param===null) return 'NULL';
 			return "'".$db->escapeString($param)."'";
 		}, $sql);
-		//echo "\n$sql\n";
 		try {	$result=$db->query($sql); } catch(\Exception $e) { $result=null; }
 		return $result;
 	}
@@ -1248,12 +1230,10 @@ class PHP_CRUD_API {
 		$page      = $this->processPageParameter($page);
 		$order     = $this->processOrderParameter($order);
 
-		// reflection
 		list($tables,$collect,$select) = $this->findRelations($tables,$database,$auto_include);
 		$columns = $this->addRelationColumns($columns,$select);
 		$fields = $this->findFields($tables,$columns,$database);
 
-		// permissions
 		if ($table_authorizer) $this->applyTableAuthorizer($table_authorizer,$action,$database,$tables);
 		if (!isset($tables[0])) $this->exitWith404('entity');
 		if ($record_filter) $this->applyRecordFilter($record_filter,$action,$database,$tables,$filters);
@@ -1261,7 +1241,6 @@ class PHP_CRUD_API {
 		if ($column_authorizer) $this->applyColumnAuthorizer($column_authorizer,$action,$database,$fields);
 
 		if ($post) {
-			// input
 			$context = $this->retrieveInput($post);
 			$input = $this->filterInputByFields($context,$fields[$tables[0]]);
 
@@ -1305,7 +1284,6 @@ class PHP_CRUD_API {
 		extract($parameters);
 		echo '{';
 		$table = array_shift($tables);
-		// first table
 		$count = false;
 		echo '"'.$table.'":{';
 		if (is_array($order) && is_array($page)) {
@@ -1370,7 +1348,6 @@ class PHP_CRUD_API {
 		}
 		if ($count) echo '"results":'.$count;
 		echo '}';
-		// other tables
 		foreach ($tables as $t=>$table) {
 			echo ',';
 			echo '"'.$table.'":{';
@@ -1485,7 +1462,6 @@ class PHP_CRUD_API {
 	public function __construct($config) {
 		extract($config);
 
-		// initialize
 		$dbengine = isset($dbengine)?$dbengine:null;
 		$hostname = isset($hostname)?$hostname:null;
 		$username = isset($username)?$username:null;
@@ -1510,7 +1486,6 @@ class PHP_CRUD_API {
 		$get = isset($get)?$get:null;
 		$post = isset($post)?$post:null;
 
-		// defaults
 		if (!$dbengine) {
 			$dbengine = 'MySQL';
 		}
@@ -1530,7 +1505,6 @@ class PHP_CRUD_API {
 			$post = 'php://input';
 		}
 
-		// connect
 		$request = trim($request,'/');
 		if (!$database) {
 			$database  = $this->parseRequestParameter($request, 'a-zA-Z0-9\-_');
@@ -1592,6 +1566,7 @@ class PHP_CRUD_API {
 	}
 
 	protected function swagger($settings) {
+		/*
 		extract($settings);
 
 		$tables = array();
@@ -1619,7 +1594,7 @@ class PHP_CRUD_API {
 			$table_list = array($table['name']);
 			$table_fields = $this->findFields($table_list,false,$database);
 			$table_names = array_map(function($v){ return $v['name'];},$tables);
-			
+
 			if ($extensions) {
 				$result = $this->db->query($this->db->getSql('reflect_belongs_to'),array($table_list[0],$table_names,$database,$database));
 				while ($row = $this->db->fetchRow($result)) {
@@ -1634,7 +1609,7 @@ class PHP_CRUD_API {
 					$table_fields[$table['name']][$primaryKey]->primaryKey = true;
 				}
 			}
-			
+
 			foreach (array('root_actions','id_actions') as $path) {
 				foreach ($table[$path] as $i=>$action) {
 					$table_list = array($table['name']);
@@ -1644,14 +1619,12 @@ class PHP_CRUD_API {
 					if (!$table_list || !$fields[$table['name']]) $tables[$t][$path][$i] = false;
 					else $tables[$t][$path][$i]['fields'] = $fields[$table['name']];
 				}
-				// remove unauthorized tables and tables without fields
 				$tables[$t][$path] = array_values(array_filter($tables[$t][$path]));
 			}
 			if (!$tables[$t]['root_actions']&&!$tables[$t]['id_actions']) $tables[$t] = false;
 		}
 		$tables = array_merge(array_filter($tables));
-		//var_dump($tables);die();
-
+		
 		header('Content-Type: application/json; charset=utf-8');
 		echo '{"swagger":"2.0",';
 		echo '"info":{';
@@ -1768,11 +1741,11 @@ class PHP_CRUD_API {
 							}
 							echo '}';
 						}
-						echo '}'; //properties
-						echo '}'; //items
-						echo '}'; //schema
-						echo '}'; //200
-						echo '}'; //responses
+						echo '}';
+						echo '}';
+						echo '}';
+						echo '}';
+						echo '}';
 					}
 					if ($action['name']=='create') {
 						echo '"parameters":[{';
@@ -1798,19 +1771,19 @@ class PHP_CRUD_API {
 							}
 							echo '}';
 						}
-						echo '}'; //properties
-						echo '}'; //schema
+						echo '}';
+						echo '}';
 						echo '}],';
 						echo '"responses":{';
 						echo '"200":{';
 						echo '"description":"Identifier of created item.",';
 						echo '"schema":{';
 						echo '"type":"integer"';
-						echo '}';//schema
-						echo '}';//200
-						echo '}';//responses
+						echo '}';
+						echo '}';
+						echo '}';
 					}
-					echo '}';//method
+					echo '}';
 				}
 				echo '}';
 			}
@@ -1854,8 +1827,8 @@ class PHP_CRUD_API {
 							}
 							echo '}';
 						}
-						echo '}'; //properties
-						echo '}'; //schema
+						echo '}';
+						echo '}';
 						echo '}';
 					}
 					echo '],';
@@ -1881,8 +1854,8 @@ class PHP_CRUD_API {
 							}
 							echo '}';
 						}
-						echo '}'; //properties
-						echo '}'; //schema
+						echo '}';
+						echo '}';
 						echo '}';
 						echo '}';
 					} else {
@@ -1902,6 +1875,7 @@ class PHP_CRUD_API {
 		}
 		echo '}';
 			echo '}';
+		*/
 	}
 
 	public function executeCommand() {
@@ -1925,46 +1899,6 @@ class PHP_CRUD_API {
 
 }
 
-// uncomment the lines below when running in stand-alone mode:
-
-// $api = new PHP_CRUD_API(array(
-// 	'dbengine'=>'MySQL',
-// 	'hostname'=>'localhost',
-//	'username'=>'xxx',
-//	'password'=>'xxx',
-//	'database'=>'xxx',
-// 	'charset'=>'utf8'
-// ));
-// $api->executeCommand();
-
-// For Microsoft SQL Server 2012 use:
-
-// $api = new PHP_CRUD_API(array(
-// 	'dbengine'=>'SQLServer',
-// 	'hostname'=>'(local)',
-// 	'username'=>'',
-// 	'password'=>'',
-// 	'database'=>'xxx',
-// 	'charset'=>'UTF-8'
-// ));
-// $api->executeCommand();
-
-// For PostgreSQL 9 use:
-
-// $api = new PHP_CRUD_API(array(
-// 	'dbengine'=>'PostgreSQL',
-// 	'hostname'=>'localhost',
-// 	'username'=>'xxx',
-// 	'password'=>'xxx',
-// 	'database'=>'xxx',
-// 	'charset'=>'UTF8'
-// ));
-// $api->executeCommand();
-
-// For SQLite 3 use:
-
-// $api = new PHP_CRUD_API(array(
-// 	'dbengine'=>'SQLite',
-// 	'database'=>'data/blog.db',
-// ));
-// $api->executeCommand();
+if (is_file('config_api.php')) {
+	require_once('config_api.php');
+}
