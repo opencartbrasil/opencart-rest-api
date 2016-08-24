@@ -51,6 +51,21 @@ class Database {
 
         return self::$db;
     }
+    /**
+	 * Function to get HTTP headers
+	 */	
+   public static function getHeaders() {
+		if(function_exists('apache_request_headers')) {
+			return apache_request_headers();
+		}
+		$headers = array();
+		$keys = preg_grep('{^HTTP_}i', array_keys($_SERVER));
+		foreach($keys as $val) {
+				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($val, 5)))));
+				$headers[$key] = $_SERVER[$val];
+			}
+		return $headers;
+	}
 }
 
 class Session {
@@ -102,9 +117,12 @@ class Session {
 	}
 }
 
-foreach (getallheaders() as $name => $value) {
-    if ($name == 'key') {
-		$key = $value;
+
+$headers = Database::getHeaders();
+
+foreach ($headers as $name => $value) {
+    if ($name == 'Key') {
+	  $key = $value;
 	}
 }
 
