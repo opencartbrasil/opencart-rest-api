@@ -118,7 +118,7 @@ GET http://www.seudominio.com.br/api.php/oc_product/40
 
 ### Acesso a API REST do OpenCart (Access to the REST API OpenCart)
 
-#### - Em PHP (PHP Script):
+#### - Listando os produtos: Em PHP (PHP Script):
 
 ```php
 <?php
@@ -134,6 +134,32 @@ curl_setopt_array($ch, [
 	CURLOPT_RETURNTRANSFER => true,
 	CURLOPT_SSL_VERIFYHOST => false,
 	CURLOPT_SSL_VERIFYPEER => false
+]);
+$out = curl_exec($ch);
+curl_close($ch);
+print_r( $out ); // Result json
+```
+
+#### - Cadastrando um departamento: Em PHP (PHP Script):
+
+```php
+<?php
+$headers = array();
+$headers[] = 'Content-Type: application/json';
+$headers[] = 'key: mMAnvMIaP7zPHnF7hBi23ebGyIU6sp2eWRfdi08yNWOo8wRXPAWgCol'; // // Replace key value for API key OpenCart (Only numbers and letters)
+
+$data = array('name' => 'Samsung', 'image' => '', 'sort_order' => '0');
+
+$ch = curl_init();
+curl_setopt_array($ch, [
+	CURLOPT_URL            => 'http://www.seudominio.com.br/api.php/oc_manufacturer/', // Replace domain and table name
+        CURLOPT_HTTPHEADER     => $headers,
+        CURLOPT_CUSTOMREQUEST  => 'POST',
+        CURLOPT_POSTFIELDS     => json_encode($data),
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false
 ]);
 $out = curl_exec($ch);
 curl_close($ch);
