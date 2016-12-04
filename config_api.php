@@ -17,10 +17,8 @@ if (ini_get('magic_quotes_gpc')) {
     } else {
       $data = stripslashes($data);
     }
-
     return $data;
   }
-
   $_GET = clean($_GET);
   $_POST = clean($_POST);
   $_COOKIE = clean($_COOKIE);
@@ -47,10 +45,9 @@ class Database {
   public static function connection() {
     if (!self::$db) 
       new Database();
-
       return self::$db;
   }
-  
+
   public static function getHeaders() {
     if(function_exists('apache_request_headers')) {
       return apache_request_headers();
@@ -91,71 +88,55 @@ class Session {
       ini_set('session.use_cookies', 'On');
       ini_set('session.use_trans_sid', 'Off');
       ini_set('session.cookie_httponly', 'On');
-
       if ($session_id) {
         session_id($session_id);
       }
-
       if (isset($_COOKIE[session_name()]) && !preg_match('/^[a-zA-Z0-9,\-]{22,52}$/', $_COOKIE[session_name()])) {
         exit('Error: Invalid session ID!');
       }
-
       session_set_cookie_params(0, '/');
       session_start();
     }
-
     if (!isset($_SESSION[$key])) {
       $_SESSION[$key] = array();
     }
-
     $this->data =& $_SESSION[$key];
-
     return true;
   }
 }
 
-
 $headers = Database::getHeaders();
-
 foreach ($headers as $name => $value) {
-  if ($name == 'Key') {
+  if ($name == 'key') {
     $key = $value;
   }
 }
 
 if (isset($key) && ctype_alnum($key)) {
   $conn = Database::connection();
-
   $sql = $conn->prepare("SELECT api_id FROM `" . DB_PREFIX . "api` WHERE `key` = :key AND `status` = '1'");
   $sql->bindParam(':key', $key, PDO::PARAM_STR);
   $sql->execute();
-
   $api_info = $sql->fetch(PDO::FETCH_OBJ);
-
   if (isset($api_info->api_id) && ctype_digit($api_info->api_id)) {
     if (RESTRICT_IP) {
       $sql = $conn->prepare("SELECT ip FROM `" . DB_PREFIX . "api_ip` WHERE `api_id` = :api_id AND `ip` = :ip");
       $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
       $sql->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
       $sql->execute();
-
       $ip_info = $sql->fetch(PDO::FETCH_OBJ);
-
       if (!isset($ip_info->ip)) {
         header('Content-Type: application/json; charset=utf-8', true, 401);
         exit(json_encode(array('Conection Error' => 'Your IP '. $_SERVER['REMOTE_ADDR'] .' is not allowed to access this API!')));
       }
     }
-
     if (SESSION_LOG) {
       $session_name = 'temp_session_' . uniqid();
       $session = new Session();
       $session->start($session->getId(), $session_name);
       $session_id = $session->getId();
-
       require_once(DIR_SYSTEM . 'helper/general.php');
       $token = token(32);
-
       $sql = $conn->prepare("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = :api_id, `token` = :token, `session_name` = :session_name, `session_id` = :session_id, `ip` = :ip, `date_added` = NOW(), `date_modified` = NOW()");
       $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
       $sql->bindParam(':token', $token, PDO::PARAM_STR);
@@ -164,18 +145,15 @@ if (isset($key) && ctype_alnum($key)) {
       $sql->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
       $sql->execute();
     }
-
     $api = new PHP_CRUD_API(array(
                 'dbengine'  =>  'MySQL',
                 'hostname'  =>  DB_HOSTNAME,
                 'username'  =>  DB_USERNAME,
                 'password'  =>  DB_PASSWORD,
                 'database'  =>  DB_DATABASE,
-                'prefix'    =>  DB_PREFIX,
                 'charset'   =>  'utf8'
               ));
     $api->executeCommand();
-
   } else {
     header('Content-Type: application/json; charset=utf-8', true, 401);
     exit(json_encode(array('API Error' => 'Incorrect Key!')));
