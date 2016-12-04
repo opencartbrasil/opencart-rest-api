@@ -118,7 +118,7 @@ GET http://www.seudominio.com.br/api.php/oc_product/40
 
 ### Acesso a API REST do OpenCart (Access to the REST API OpenCart)
 
-#### - Listando os produtos: Em PHP (PHP Script):
+#### - Listando os produtos: Em PHP (PHP Script) GET:
 
 ```php
 <?php
@@ -140,7 +140,7 @@ curl_close($ch);
 print_r( $out ); // Result json
 ```
 
-#### - Cadastrando um departamento: Em PHP (PHP Script):
+#### - Cadastrando um departamento: Em PHP (PHP Script) POST:
 
 ```php
 <?php
@@ -165,6 +165,21 @@ $out = curl_exec($ch);
 curl_close($ch);
 print_r( $out ); // Result json
 ```
+
+### Corrigindo o erro "Deprecated: Automatically populating $HTTP_RAW_POST_DATA..."
+
+Se ao utilizar a API, você receber o erro abaixo:
+
+Deprecated: Automatically populating $HTTP_RAW_POST_DATA is deprecated and will be removed in a future version. To avoid this warning set 'always_populate_raw_post_data' to '-1' in php.ini and use the php://input stream instead. in Unknown on line 0
+
+No arquivo de configurações do PHP, que geralmente é o "php.ini", descomente ( apague o ; ) a linha abaixo:
+```php
+;always_populate_raw_post_data = -1
+```
+
+E reinicie o servidor web. 
+
+Importante: Este erro costuma aparecer a partir da versão 5.6 do PHP.
 
 ### Como contribuir
 
