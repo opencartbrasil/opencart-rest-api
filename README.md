@@ -20,9 +20,10 @@ Caso deseje doar um valor para contribuir com este trabalho continuo e sempre gr
 
 ### Instalação (Installation)
 
- 1. Faça o download da API no link: https://github.com/opencartbrasil/opencart-rest-api/releases. Localize a versão mais atual e compatível com sua versão do OpenCart, do arquivo "opencart-rest-api.ocmod.zip".
- 2. Na administração da loja acesse o menu Extensions->Extension Installer (Extensões->Instalador).
- 3. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
+ 1. Acesse o link: https://github.com/opencartbrasil/opencart-rest-api/releases.
+ 2. Localize a versão mais atual e compatível com sua versão do OpenCart, e faça o download do arquivo "opencart-rest-api.ocmod.zip".
+ 3. Na administração da loja acesse o menu Extensions->Extension Installer (Extensões->Instalador).
+ 4. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
  
 ### Configuração (Configuration)
 
