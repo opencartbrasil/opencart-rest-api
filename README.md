@@ -1,4 +1,6 @@
-### Resumo
+[![license][licenca-badge]][LICENSE]
+
+### Apresentação
 
 API REST para OpenCart 2.1 ou superior, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
 
@@ -22,7 +24,7 @@ Caso deseje doar um valor para contribuir com este trabalho continuo e sempre gr
 
  1. Acesse o link: https://github.com/opencartbrasil/opencart-rest-api/releases.
  2. Localize a versão mais atual e compatível com sua versão do OpenCart, e faça o download do arquivo "opencart-rest-api.ocmod.zip".
- 3. Na administração da loja acesse o menu Extensions->Extension Installer (Extensões->Instalador).
+ 3. Na administração da loja acesse o menu Extensões->Instalador (Extensions->Installer).
  4. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
  
 ### Configuração (Configuration)
@@ -180,15 +182,7 @@ No arquivo de configurações do PHP, que geralmente é o "php.ini", descomente 
 
 E reinicie o servidor web. 
 
-Importante: Este erro costuma aparecer a partir da versão 5.6 do PHP.
+#### Importante: Este erro costuma aparecer a partir da versão 5.6 do PHP.
 
-### Como contribuir
-
- 1. Faça um Fork do projeto e edite os arquivos que desejar.
- 2. Faça um Pull para que suas sugestões de melhorias sejam avaliadas e aceitas, caso aprovadas.
- 3. Abra uma Inssue com sua dúvida ou sugestão.
-
-### Licença
-
-[GNU General Public License version 3 (GPLv3)](https://github.com/opencartbrasil/opencart-rest-api
-/blob/master/LICENSE)
+[licenca-badge]: https://img.shields.io/badge/licença-GPLv3-blue.svg
+[LICENSE]: ./LICENSE
