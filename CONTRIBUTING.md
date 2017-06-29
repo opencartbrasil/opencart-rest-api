@@ -6,4 +6,4 @@
 
 [pull-request]: https://help.github.com/articles/creating-a-pull-request/
 [fork]: https://help.github.com/articles/fork-a-repo/
-[issues]: https://github.com/opencartbrasil/ocmod-editor/issues
+[issues]: https://github.com/opencartbrasil/opencart-rest-api/issues
