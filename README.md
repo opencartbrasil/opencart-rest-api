@@ -24,19 +24,19 @@ Caso deseje doar um valor para contribuir com este trabalho continuo e sempre gr
 
  1. Acesse o link: https://github.com/opencartbrasil/opencart-rest-api/releases.
  2. Localize a versão mais atual e compatível com sua versão do OpenCart, e faça o download do arquivo "opencart-rest-api.ocmod.zip".
- 3. Na administração da loja acesse o menu Extensões->Instalador (Extensions->Installer).
+ 3. Na administração da loja acesse o menu Extensões→Instalador (Extensions→Installer).
  4. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
  
 ### Configuração (Configuration)
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API (System->Users->API).
+ 1. Acesse a administração de sua loja, e vá no menu Configurações→Gerenciar Usuários→API (System→Users→API).
  2. Clique no botão "Novo" (Add New), no campo "Nome da API" (API Name) coloque "API REST", logo abaixo, clique no botão "Gerar" (Generate) para criar sua "Chave da API", no campo "Situação" (Status) selecione a opção "Habilitar" (Enabled), e clique no botão "Salvar" (Save).
  
 ### Configurações extras (Extra Configuration)
 
 #### Restringir o acesso a API por IP cadastrado através da administração da loja OpenCart (Restrict access IP):
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações->Gerenciar Usuários->API (System->Users->API).
+ 1. Acesse a administração de sua loja, e vá no menu Configurações→Gerenciar Usuários→API (System→Users→API).
  2. Localize a API com o nome "API REST", clique no botão "Editar" (Edit), clique na aba "Endereço IP" (IP Addresses), clique no botão "Adicionar IP" (Add IP), adicione o IP que você deseja que tenha acesso a API, e clique no botão "Salvar" (Save).
  
 Edite o arquivo "config_api.php", e localize a linha:
@@ -67,7 +67,7 @@ Altere para:
 define('SESSION_LOG', true);
 ```
 
-E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações->Gerenciar Usuários->API (System->Users->API), localize a API com o nome "API REST", clique no botão "Editar" (Edit), e clique na aba "Sessão" (Session).
+E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações→Gerenciar Usuários→API (System→Users→API), localize a API com o nome "API REST", clique no botão "Editar" (Edit), e clique na aba "Sessão" (Session).
 
 ### Utilização (Usage)
 
