@@ -196,7 +196,7 @@ class MySQL implements DatabaseInterface {
 
     public function isBinaryType($field) {
         //echo "$field->name: $field->type ($field->flags)\n";
-        return (($field->flags & 128) && ($field->type>=249) && ($field->type<=252));
+        return (($field->flags & 128) && (($field->type>=249 && $field->type<=252) || ($field->type>=253 && $field->type<=254 && $field->charsetnr==63)));
     }
 
     public function isGeometryType($field) {
@@ -1134,7 +1134,7 @@ class PHP_CRUD_API {
 
     protected function applyBeforeHandler(&$action,&$database,&$table,&$ids,&$callback,&$inputs) {
         if (is_callable($callback,true)) {
-            $max = count($ids)?:count($inputs);
+            $max = is_array($ids)?count($ids):count($inputs);
             $values = array('action'=>$action,'database'=>$database,'table'=>$table);
             for ($i=0;$i<$max;$i++) {
                 $action = $values['action'];
@@ -1265,6 +1265,24 @@ class PHP_CRUD_API {
             die("Not found ($type)");
         } else {
             throw new \Exception("Not found ($type)");
+        }
+    }
+
+    protected function exitWith403($type) {
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            header('Content-Type:',true,403);
+            die("Forbidden ($type)");
+        } else {
+            throw new \Exception("Forbidden ($type)");
+        }
+    }
+
+    protected function exitWith400($type) {
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            header('Content-Type:',true,400);
+            die("The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications. ($type)");
+        } else {
+            throw new \Exception("Bad request ($type)");
         }
     }
 
@@ -1677,10 +1695,16 @@ class PHP_CRUD_API {
     }
 
     protected function retrieveInputs($data) {
+        $data = trim($data, " \t\n\r");
         if (strlen($data)==0) {
             $input = false;
         } else if ($data[0]=='{' || $data[0]=='[') {
             $input = json_decode($data);
+            $causeCode = json_last_error();
+            if ($causeCode !== JSON_ERROR_NONE) {
+                $errorString = "Error decoding input JSON. json_last_error code: " . $causeCode;
+                $this->exitWith400($errorString);
+            }
         } else {
             parse_str($data, $input);
             foreach ($input as $key => $value) {
@@ -1708,21 +1732,26 @@ class PHP_CRUD_API {
         return $keep;
     }
 
-    protected function findFields($tables,$columns,$exclude,$select,$database) {
+    protected function findFields($tables,$database) {
         $fields = array();
+        foreach ($tables as $i=>$table) {
+            $fields[$table] = $this->findTableFields($table,$database);
+        }
+        return $fields;
+    }
+    
+    protected function limitFields($fields,$columns,$exclude,$select) {
         if ($select && ($columns || $exclude)) {
             $keep = $this->getRelationShipColumns($select);
         } else {
             $keep = false;
         }
-        foreach ($tables as $i=>$table) {
-            $fields[$table] = $this->findTableFields($table,$database);
+        foreach (array_keys($fields) as $i=>$table) {
             $fields[$table] = $this->filterFieldsByColumns($fields[$table],$columns,$keep,$i==0,$table);
             $fields[$table] = $this->filterFieldsByExclude($fields[$table],$exclude,$keep,$i==0,$table);
         }
         return $fields;
     }
-
     protected function filterFieldsByColumns($fields,$columns,$keep,$first,$table) {
         if ($columns) {
             $columns = explode(',',$columns);
@@ -1876,13 +1905,14 @@ class PHP_CRUD_API {
 
         // reflection
         list($tables,$collect,$select) = $this->findRelations($tables,$database,$auto_include);
-        $fields = $this->findFields($tables,$columns,$exclude,$select,$database);
-
+        $allFields = $this->findFields($tables,$database);
+        $fields = $this->limitFields($allFields,$columns,$exclude,$select);
+        
         // permissions
         if ($table_authorizer) $this->applyTableAuthorizer($table_authorizer,$action,$database,$tables);
         if (!isset($tables[0])) $this->exitWith404('entity');
         if ($record_filter) $this->applyRecordFilter($record_filter,$action,$database,$tables,$filters);
-        if ($tenancy_function) $this->applyTenancyFunction($tenancy_function,$action,$database,$fields,$filters);
+        if ($tenancy_function) $this->applyTenancyFunction($tenancy_function,$action,$database,$allFields,$filters);
         if ($column_authorizer) $this->applyColumnAuthorizer($column_authorizer,$action,$database,$fields);
 
         // input
@@ -1890,7 +1920,7 @@ class PHP_CRUD_API {
         foreach ($inputs as $k=>$context) {
             $input = $this->filterInputByFields($context,$fields[$tables[0]]);
 
-            if ($tenancy_function) $this->applyInputTenancy($tenancy_function,$action,$database,$tables[0],$input,$fields[$tables[0]]);
+            if ($tenancy_function) $this->applyInputTenancy($tenancy_function,$action,$database,$tables[0],$input,$allFields[$tables[0]]);
             if ($input_sanitizer) $this->applyInputSanitizer($input_sanitizer,$action,$database,$tables[0],$input,$fields[$tables[0]]);
             if ($input_validator) $this->applyInputValidator($input_validator,$action,$database,$tables[0],$input,$fields[$tables[0]],$context);
 
@@ -2010,9 +2040,7 @@ class PHP_CRUD_API {
                 $first_row = true;
                 foreach ($select[$table] as $field => $path) {
                     $values = $collect[$path[0]][$path[1]];
-                    if ($values) {
-                        $this->addFilter($filters,$table,'and',$field,'in',implode(',',$values));
-                    }
+                    $this->addFilter($filters,$table,'and',$field,'in',implode(',',$values));
                     if ($first_row) $first_row = false;
                     else echo ',';
                     echo '"'.$field.'":"'.implode('.',$path).'"';
@@ -2258,11 +2286,11 @@ class PHP_CRUD_API {
             $this->db->close($result);
         }
 
+        $table_names = array_map(function($v){ return $v['name'];},$tables);
         foreach ($tables as $t=>$table)    {
             $table_list = array($table['name']);
-            $table_fields = $this->findFields($table_list,false,false,false,$database);
-            $table_names = array_map(function($v){ return $v['name'];},$tables);
-
+            $table_fields = $this->findFields($table_list,$database);
+            
             // extensions
             $result = $this->db->query($this->db->getSql('reflect_belongs_to'),array($table_list[0],$table_names,$database,$database));
             while ($row = $this->db->fetchRow($result)) {
@@ -2337,7 +2365,7 @@ class PHP_CRUD_API {
             if ($i>0) echo ',';
             echo '{';
             echo '"name":"'.$table['name'].'",';
-            echo '"description":"'.$table['comments'].'"';
+            echo '"description":'.json_encode($table['comments']);
             echo '}';
         }
         echo '],';
@@ -2417,6 +2445,9 @@ class PHP_CRUD_API {
                         echo '"200":{';
                         echo '"description":"An array of '.$table['name'].'",';
                         echo '"schema":{';
+                        echo '"type": "object",';
+                        echo '"properties": {';
+                        echo '"'.$table['name'].'": {';
                         echo '"type":"array",';
                         echo '"items":{';
                         echo '"type": "object",';
@@ -2430,7 +2461,7 @@ class PHP_CRUD_API {
                             }
                             echo ',"x-dbtype": '.json_encode($action['fields'][$field]->{'x-dbtype'});
                             echo ',"x-nullable": '.json_encode($action['fields'][$field]->{'x-nullable'});
-                            if (isset($action['fields'][$field]->maxLength)) {
+                            if (isset($action['fields'][$field]->maxLength) && $action['fields'][$field]->maxLength>0) {
                                 echo ',"maxLength": '.json_encode($action['fields'][$field]->maxLength);
                             }
                             if (isset($action['fields'][$field]->default)) {
@@ -2449,6 +2480,8 @@ class PHP_CRUD_API {
                         }
                         echo '}'; //properties
                         echo '}'; //items
+                        echo '}'; //table
+                        echo '}'; //properties
                         echo '}'; //schema
                         echo '}'; //200
                         echo '}'; //responses
@@ -2627,12 +2660,19 @@ class PHP_CRUD_API {
     protected function allowOrigin($origin,$allowOrigins) {
         if (isset($_SERVER['REQUEST_METHOD'])) {
             header('Access-Control-Allow-Credentials: true');
-            foreach (explode(',',$allowOrigins) as $o) {
-                if (preg_match('/^'.str_replace('\*','.*',preg_quote(strtolower(trim($o)))).'$/',$origin)) { 
+        }
+        $found = false;
+        foreach (explode(',',$allowOrigins) as $o) {
+            if (preg_match('/^'.str_replace('\*','.*',preg_quote(strtolower(trim($o)))).'$/',$origin)) { 
+                $found = true;
+                if (isset($_SERVER['REQUEST_METHOD'])) {
                     header('Access-Control-Allow-Origin: '.$origin);
-                    break;
                 }
+                break;
             }
+        }
+        if (!$found) {
+            $this->exitWith403('origin');
         }
     }
 
