@@ -18,52 +18,51 @@ Projetos incluídos (Related projects):
 
 ### Instalação (Installation)
 
- 1. Acesse o link: https://github.com/opencartbrasil/opencart-rest-api/releases.
- 2. Localize a versão mais atual e compatível com sua versão do OpenCart, e faça o download do arquivo "opencart-rest-api.ocmod.zip".
- 3. Na administração da loja acesse o menu Extensões→Instalador (Extensions→Installer).
- 4. Na página do instalador, clique no botão Upload e selecione o arquivo 'opencart-rest-api.ocmod.zip' (que você baixou deste repositório), e aguarde a conclusão da instalação automática.
+ 1. Faça o download: https://github.com/opencartbrasil/opencart-rest-api/archive/master.zip
+ 2. Descompacte o arquivo zip, e envie por FTP para o diretório raiz de sua loja os arquivo **api.php** e **config_api.php**.
+
+**Pronto!**
  
 ### Configuração (Configuration)
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações→Gerenciar Usuários→API (System→Users→API).
- 2. Clique no botão "Novo" (Add New), no campo "Nome da API" (API Name) coloque "API REST", logo abaixo, clique no botão "Gerar" (Generate) para criar sua "Chave da API", no campo "Situação" (Status) selecione a opção "Habilitar" (Enabled), e clique no botão "Salvar" (Save).
+ 1. Acesse a administração de sua loja, e vá no menu **Configurações→Gerenciar Usuários→API** (System→Users→API).
+ 2. Clique no botão "**Novo**" (Add New), no campo "**Nome da API**" (API Name) coloque "**API REST**", logo abaixo, clique no botão "**Gerar**" (Generate) para criar sua "**Chave da API**", no campo "**Situação**" (Status) selecione a opção "**Habilitar**" (Enabled), e clique no botão "**Salvar**" (Save).
  
 ### Configurações extras (Extra Configuration)
 
 #### Restringir o acesso a API por IP cadastrado através da administração da loja OpenCart (Restrict access IP):
 
- 1. Acesse a administração de sua loja, e vá no menu Configurações→Gerenciar Usuários→API (System→Users→API).
- 2. Localize a API com o nome "API REST", clique no botão "Editar" (Edit), clique na aba "Endereço IP" (IP Addresses), clique no botão "Adicionar IP" (Add IP), adicione o IP que você deseja que tenha acesso a API, e clique no botão "Salvar" (Save).
+Acesse a administração de sua loja, e vá no menu **Configurações→Gerenciar Usuários→API** (System→Users→API), localize a API com o nome "**API REST**", clique no botão "**Editar**" (Edit), clique na aba "**Endereço IP**" (IP Addresses), clique no botão "**Adicionar IP**" (Add IP), adicione o IP que você deseja que tenha acesso a API, e clique no botão "**Salvar**" (Save).
  
-Edite o arquivo "config_api.php", e localize a linha:
+Agora edite o arquivo "**config_api.php**", e localize a linha:
 
 ```php
 define('RESTRICT_IP', false);
 ```
 
-Altere para:
+E altere para:
 
 ```php
 define('RESTRICT_IP', true);
 ```
 
-E salve as alterações no arquivo.
+Por último, salve as alterações no arquivo.
 
 #### Gravar no log de sessões da API do OpenCart os acessos feitos através da API (Log Access API):
 
-Edite o arquivo "config_api.php", e localize a linha:
+Edite o arquivo "**config_api.php**", e localize a linha:
 
 ```php
 define('SESSION_LOG', false);
 ```
 
-Altere para:
+E altere para:
 
 ```php
 define('SESSION_LOG', true);
 ```
 
-E salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu Configurações→Gerenciar Usuários→API (System→Users→API), localize a API com o nome "API REST", clique no botão "Editar" (Edit), e clique na aba "Sessão" (Session).
+Salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu **Configurações→Gerenciar Usuários→API** (System→Users→API), localize a API com o nome "**API REST**", clique no botão "**Editar**" (Edit), e clique na aba "**Sessão**" (Session).
 
 ### Utilização (Usage)
 
@@ -169,9 +168,9 @@ print_r( $out ); // Result json
 
 Se ao utilizar a API, você receber o erro abaixo:
 
-Deprecated: Automatically populating $HTTP_RAW_POST_DATA is deprecated and will be removed in a future version. To avoid this warning set 'always_populate_raw_post_data' to '-1' in php.ini and use the php://input stream instead. in Unknown on line 0
+**Deprecated: Automatically populating $HTTP_RAW_POST_DATA is deprecated and will be removed in a future version. To avoid this warning set 'always_populate_raw_post_data' to '-1' in php.ini and use the php://input stream instead. in Unknown on line 0**
 
-No arquivo de configurações do PHP, que geralmente é o "php.ini", descomente ( apague o ; ) a linha abaixo:
+No arquivo de configurações do PHP, que geralmente é o "**php.ini**", descomente ( apague o ; ) a linha abaixo:
 ```php
 ;always_populate_raw_post_data = -1
 ```
