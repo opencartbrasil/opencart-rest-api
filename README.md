@@ -8,7 +8,7 @@ O controle de acesso a API REST é feito através da Chave da API que é cadastr
 
 Projetos incluídos (Related projects):
 
-  - [PHP-CRUD-API](https://github.com/mevdschee/php-crud-api): Script PHP que adiciona uma API REST com acesso direto ao Banco de dados (Single file PHP script that adds a REST API).
+  - [PHP-CRUD-API V1](https://github.com/mevdschee/php-crud-api/tree/v1): Script PHP que adiciona uma API REST com acesso direto ao Banco de dados (Single file PHP script that adds a REST API).
 
 ### Requisitos (Requirements)
 
@@ -112,7 +112,7 @@ GET http://www.seudominio.com.br/api.php/oc_product/40
 
 #### Documentação completa (Documentation)
 
-[MANUAL DO PHP-CRUD-API](https://github.com/mevdschee/php-crud-api/blob/master/README.md)
+[MANUAL DO PHP-CRUD-API V1](https://github.com/mevdschee/php-crud-api/blob/v1/README.md)
 
 ### Acesso a API REST do OpenCart (Access to the REST API OpenCart)
 
