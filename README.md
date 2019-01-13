@@ -197,5 +197,16 @@ E reinicie o servidor web.
 
 #### Importante: Este erro costuma aparecer a partir da versão 5.6 do PHP.
 
-[licenca-badge]: https://img.shields.io/badge/licença-GPLv3-blue.svg
-[LICENSE]: ./LICENSE
+## Contribuindo
+
+Se você encontrou um erro e deseja nos relatar, você deve registrar uma Issue.
+
+Se você tem uma correção ou melhoria e deseja nos enviar, faça um fork e nos envie um Pull request para avaliarmos.
+
+## Vulnerabilidades
+
+Se você descobrir uma vulnerabilidade de segurança, envie um e-mail para [dev@opencartbrasil.com.br](mailto:dev@opencartbrasil.com.br). Todas as vulnerabilidades informadas serão imediatamente tratadas caso confirmadas.
+
+## Licença
+
+O projeto OpenCart Brasil é um software de código aberto licenciado sob a [GPL v3](./LICENSE).
