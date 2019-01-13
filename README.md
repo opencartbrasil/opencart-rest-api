@@ -1,8 +1,13 @@
-[![license][licenca-badge]][LICENSE]
+<p align="center"><a href="https://www.opencartbrasil.com.br/"><img src="https://forum.opencartbrasil.com.br/ext/sitesplat/flatbootsminicms/images/logo/logo-colorida.png" alt="OpenCart Brasil"></a>
+</p>
+
+<p align="center">
+<a href="./LICENSE"><img src="https://img.shields.io/github/license/opencartbrasil/opencart-rest-api.svg" alt="Licença"></a>
+</p>
 
 ### Apresentação
 
-API REST para OpenCart 2.1 ou superior, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
+API REST para OpenCart 2.1 ou superior e 3.0 ou superior, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
 
 O controle de acesso a API REST é feito através da Chave da API que é cadastrada na administração do OpenCart.
 
@@ -15,6 +20,7 @@ Projetos incluídos (Related projects):
  1. PHP 5.3 ou superior.
  2. Biblioteca PDO habilitada no PHP.
  3. OpenCart 2.1 ou superior.
+ 3. OpenCart 3.0 ou superior.
 
 ### Instalação (Installation)
 
@@ -60,6 +66,18 @@ E altere para:
 
 ```php
 define('SESSION_LOG', true);
+```
+
+Se estiver utilizando o OpenCart 3, localize a linha:
+
+```php
+define('OPENCART_V3', false);
+```
+
+E altere para:
+
+```php
+define('OPENCART_V3', true);
 ```
 
 Salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu **Configurações→Gerenciar Usuários→API** (System→Users→API), localize a API com o nome "**API REST**", clique no botão "**Editar**" (Edit), e clique na aba "**Sessão**" (Session).
