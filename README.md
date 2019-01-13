@@ -5,7 +5,7 @@
 <a href="./LICENSE"><img src="https://img.shields.io/github/license/opencartbrasil/opencart-rest-api.svg" alt="Licença"></a>
 </p>
 
-### Apresentação
+## Apresentação
 
 API REST para OpenCart 2 e 3, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
 
@@ -15,28 +15,28 @@ Projetos incluídos (Related projects):
 
   - [PHP-CRUD-API V1](https://github.com/mevdschee/php-crud-api/tree/v1): Script PHP que adiciona uma API REST com acesso direto ao Banco de dados (Single file PHP script that adds a REST API).
 
-### Requisitos (Requirements)
+## Requisitos (Requirements)
 
  1. PHP 5.3 ou superior.
  2. Biblioteca PDO habilitada no PHP.
  3. OpenCart 2.1.0.2 ou superior.
  3. OpenCart 3.0.0.0 ou superior.
 
-### Instalação (Installation)
+## Instalação (Installation)
 
  1. Faça o download: https://github.com/opencartbrasil/opencart-rest-api/archive/master.zip
  2. Descompacte o arquivo zip, e envie por FTP para o diretório raiz de sua loja os arquivo **api.php** e **config_api.php**.
 
 **Pronto!**
  
-### Configuração (Configuration)
+## Configuração (Configuration)
 
  1. Acesse a administração de sua loja, e vá no menu **Configurações→Gerenciar Usuários→API** (System→Users→API).
  2. Clique no botão "**Novo**" (Add New), no campo "**Nome da API**" (API Name) coloque "**API REST**", logo abaixo, clique no botão "**Gerar**" (Generate) para criar sua "**Chave da API**", no campo "**Situação**" (Status) selecione a opção "**Habilitar**" (Enabled), e clique no botão "**Salvar**" (Save).
  
-### Configurações extras (Extra Configuration)
+## Configurações extras (Extra Configuration)
 
-#### Restringir o acesso a API por IP cadastrado através da administração da loja OpenCart (Restrict access IP):
+### Restringir o acesso da API por IP (Restrict access IP):
 
 Acesse a administração de sua loja, e vá no menu **Configurações→Gerenciar Usuários→API** (System→Users→API), localize a API com o nome "**API REST**", clique no botão "**Editar**" (Edit), clique na aba "**Endereço IP**" (IP Addresses), clique no botão "**Adicionar IP**" (Add IP), adicione o IP que você deseja que tenha acesso a API, e clique no botão "**Salvar**" (Save).
  
@@ -54,7 +54,7 @@ define('RESTRICT_IP', true);
 
 Por último, salve as alterações no arquivo.
 
-#### Gravar no log de sessões da API do OpenCart os acessos feitos através da API (Log Access API):
+### Gravar o log de acessos feitos através da API (Log Access API):
 
 Edite o arquivo "**config_api.php**", e localize a linha:
 
@@ -82,7 +82,7 @@ define('OPENCART_V3', true);
 
 Salve as alterações no arquivo, sendo que você poderá visualizar os logs de acesso através da administração de sua loja, no no menu **Configurações→Gerenciar Usuários→API** (System→Users→API), localize a API com o nome "**API REST**", clique no botão "**Editar**" (Edit), e clique na aba "**Sessão**" (Session).
 
-### Utilização (Usage)
+## Utilização (Usage)
 
 Acesse a URL da sua loja, incluindo no final o arquivo api.php, conforme o exemplo:
 
@@ -128,13 +128,13 @@ Neste outro exemplo, solicitamos os dados do produto com a coluna product_id igu
 GET http://www.seudominio.com.br/api.php/oc_product/40
 ```
 
-#### Documentação completa (Documentation)
+### Documentação completa (Documentation)
 
 [MANUAL DO PHP-CRUD-API V1](https://github.com/mevdschee/php-crud-api/blob/v1/README.md)
 
-### Acesso a API REST do OpenCart (Access to the REST API OpenCart)
+## Acesso a API REST do OpenCart (Access to the REST API OpenCart)
 
-#### - Listando os produtos: Em PHP (PHP Script) GET:
+### - Listando os produtos: Em PHP (PHP Script) GET:
 
 ```php
 <?php
@@ -156,7 +156,7 @@ curl_close($ch);
 print_r( $out ); // Result json
 ```
 
-#### - Cadastrando um departamento: Em PHP (PHP Script) POST:
+### - Cadastrando um departamento: Em PHP (PHP Script) POST:
 
 ```php
 <?php
@@ -182,7 +182,7 @@ curl_close($ch);
 print_r( $out ); // Result json
 ```
 
-### Corrigindo o erro "Deprecated: Automatically populating $HTTP_RAW_POST_DATA..."
+## "Deprecated: Automatically populating $HTTP_RAW_POST_DATA..."
 
 Se ao utilizar a API, você receber o erro abaixo:
 
@@ -195,7 +195,7 @@ No arquivo de configurações do PHP, que geralmente é o "**php.ini**", descome
 
 E reinicie o servidor web. 
 
-#### Importante: Este erro costuma aparecer a partir da versão 5.6 do PHP.
+### Importante: Este erro costuma aparecer nas versões 5.6 do PHP.
 
 ## Contribuindo
 
