@@ -7,9 +7,9 @@
 
 ### Apresentação
 
-API REST para OpenCart 2.1 ou superior e 3.0 ou superior, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
+API REST para OpenCart 2 e 3, que permite o acesso a todas as tabelas do banco de dados incluindo as que não são nativas do OpenCart.
 
-O controle de acesso a API REST é feito através da Chave da API que é cadastrada na administração do OpenCart.
+O controle de acesso a API REST é feito através da chave da API que é cadastrada na administração do OpenCart.
 
 Projetos incluídos (Related projects):
 
@@ -19,8 +19,8 @@ Projetos incluídos (Related projects):
 
  1. PHP 5.3 ou superior.
  2. Biblioteca PDO habilitada no PHP.
- 3. OpenCart 2.1 ou superior.
- 3. OpenCart 3.0 ou superior.
+ 3. OpenCart 2.1.0.2 ou superior.
+ 3. OpenCart 3.0.0.0 ou superior.
 
 ### Instalação (Installation)
 
