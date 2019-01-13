@@ -107,7 +107,8 @@ class Session {
 
 $headers = Database::getHeaders();
 foreach ($headers as $name => $value) {
-  if ($name == 'key') {
+  $name_lower = strtolower($name);
+  if ($name_lower == 'key') {
     $key = $value;
   }
 }
