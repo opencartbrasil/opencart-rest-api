@@ -7,6 +7,7 @@ if ( basename($_SERVER["PHP_SELF"]) == basename(__FILE__) ) {
 // Config
 define('RESTRICT_IP', false);
 define('SESSION_LOG', false);
+define('OPENCART_V3', false);
 
 if (ini_get('magic_quotes_gpc')) {
   function clean($data) {
@@ -138,13 +139,21 @@ if (isset($key) && ctype_alnum($key)) {
       $session_id = $session->getId();
       require_once(DIR_SYSTEM . 'helper/general.php');
       $token = token(32);
-      $sql = $conn->prepare("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = :api_id, `token` = :token, `session_name` = :session_name, `session_id` = :session_id, `ip` = :ip, `date_added` = NOW(), `date_modified` = NOW()");
-      $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
-      $sql->bindParam(':token', $token, PDO::PARAM_STR);
-      $sql->bindParam(':session_name', $session_name, PDO::PARAM_STR);
-      $sql->bindParam(':session_id', $session_id, PDO::PARAM_STR);
-      $sql->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-      $sql->execute();
+      if (OPENCART_V3) {
+        $sql = $conn->prepare("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = :api_id, `session_id` = :session_id, `ip` = :ip, `date_added` = NOW(), `date_modified` = NOW()");
+        $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
+        $sql->bindParam(':session_id', $session_id, PDO::PARAM_STR);
+        $sql->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+        $sql->execute();
+      } else {
+        $sql = $conn->prepare("INSERT INTO `" . DB_PREFIX . "api_session` SET `api_id` = :api_id, `token` = :token, `session_name` = :session_name, `session_id` = :session_id, `ip` = :ip, `date_added` = NOW(), `date_modified` = NOW()");
+        $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
+        $sql->bindParam(':token', $token, PDO::PARAM_STR);
+        $sql->bindParam(':session_name', $session_name, PDO::PARAM_STR);
+        $sql->bindParam(':session_id', $session_id, PDO::PARAM_STR);
+        $sql->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+        $sql->execute();
+      }
     }
     $api = new PHP_CRUD_API(array(
                 'dbengine'  =>  'MySQL',
