@@ -1329,8 +1329,7 @@ class PHP_CRUD_API {
     protected function processKeyParameter($key,$tables,$database) {
         if ($key===false) return false;
         $fields = $this->findPrimaryKeys($tables[0],$database);
-        if (count($fields)!=1) return array_merge(array(explode(',',$key)), $fields);
-        return array(explode(',',$key),$fields[0]);
+        return array_merge(array(explode(',',$key)), $fields);
     }
 
     protected function processOrderingsParameter($orderings) {
