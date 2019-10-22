@@ -1329,7 +1329,7 @@ class PHP_CRUD_API {
     protected function processKeyParameter($key,$tables,$database) {
         if ($key===false) return false;
         $fields = $this->findPrimaryKeys($tables[0],$database);
-        if (count($fields)!=1) $this->exitWith404('1pk');
+        if (count($fields)!=1) return array_merge(array(explode(',',$key)), $fields);
         return array(explode(',',$key),$fields[0]);
     }
 
@@ -1484,7 +1484,14 @@ class PHP_CRUD_API {
         $this->convertOutputs($sql,$params,$fields[$table]);
         $sql .= ' FROM !';
         $params[] = $table;
-        $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        if (count($key)>2) {
+            $arr = explode('-',$key[0][0]);
+            foreach ($arr as $i=>$keyId) {
+                $this->addFilter($filters,$table,'and',$key[$i + 1],'eq',$keyId);
+            }
+        } else {
+            $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        }
         $this->addWhereFromFilters($filters[$table],$sql,$params);
         $object = null;
         if ($result = $this->db->query($sql,$params)) {
@@ -1495,11 +1502,12 @@ class PHP_CRUD_API {
     }
 
     protected function retrieveObjects($key,$fields,$filters,$tables) {
-        $keyField = $key[1];
+        $keyFields = array_slice($key,1);
         $keys = $key[0];
         $rows = array();
         foreach ($keys as $key) {
-            $result = $this->retrieveObject(array(array($key),$keyField),$fields,$filters,$tables);
+            $keyValues = array(array($key));
+            $result = $this->retrieveObject(array_merge($keyValues,$keyFields),$fields,$filters,$tables);
             if ($result===null) {
                 return null;
             }
@@ -1550,7 +1558,14 @@ class PHP_CRUD_API {
             $params[] = $k;
             $params[] = $v;
         }
-        $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        if (count($key)>2) {
+            $arr = explode('-',$key[0][0]);
+            foreach ($arr as $i=>$keyId) {
+                $this->addFilter($filters,$table,'and',$key[$i + 1],'eq',$keyId);
+            }
+        } else {
+            $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        }
         $this->addWhereFromFilters($filters[$table],$sql,$params);
         $result = $this->db->query($sql,$params);
         if (!$result) return null;
@@ -1559,7 +1574,7 @@ class PHP_CRUD_API {
 
     protected function updateObjects($key,$inputs,$filters,$tables) {
         if (!$inputs) return null;
-        $keyField = $key[1];
+        $keyFields = array_slice($key,1);
         $keys = $key[0];
         if (count(array_filter($inputs))!=count(array_filter($keys))) {
             $this->exitWith404('subject');
@@ -1567,7 +1582,8 @@ class PHP_CRUD_API {
         $rows = array();
         $this->db->beginTransaction();
         foreach ($inputs as $i=>$input) {
-            $result = $this->updateObject(array(array($keys[$i]),$keyField),$input,$filters,$tables);
+            $keyValues = array(array($keys[$i]));
+            $result = $this->updateObject(array_merge($keyValues,$keyFields),$input,$filters,$tables);
             if ($result===null) {
                 $this->db->rollbackTransaction();
                 return null;
@@ -1582,7 +1598,14 @@ class PHP_CRUD_API {
         $table = $tables[0];
         $sql = 'DELETE FROM !';
         $params = array($table);
-        $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        if (count($key)>2) {
+            $arr = explode('-',$key[0][0]);
+            foreach ($arr as $i=>$keyId) {
+                $this->addFilter($filters,$table,'and',$key[$i + 1],'eq',$keyId);
+            }
+        } else {
+            $this->addFilter($filters,$table,'and',$key[1],'eq',$key[0][0]);
+        }
         $this->addWhereFromFilters($filters[$table],$sql,$params);
         $result = $this->db->query($sql,$params);
         if (!$result) return null;
@@ -1590,12 +1613,13 @@ class PHP_CRUD_API {
     }
 
     protected function deleteObjects($key,$filters,$tables) {
-        $keyField = $key[1];
+        $keyFields = array_slice($key,1);
         $keys = $key[0];
         $rows = array();
         $this->db->beginTransaction();
         foreach ($keys as $key) {
-            $result = $this->deleteObject(array(array($key),$keyField),$filters,$tables);
+            $keyValues = array(array($key));
+            $result = $this->deleteObject(array_merge($keyValues,$keyFields),$filters,$tables);
             if ($result===null) {
                 $this->db->rollbackTransaction();
                 return null;
