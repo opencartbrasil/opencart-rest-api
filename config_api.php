@@ -114,13 +114,13 @@ foreach ($headers as $name => $value) {
   }
 }
 
-if (isset($key) && ctype_alnum($key)) {
+if (isset($key) && ctype_alnum($key) || $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   $conn = Database::connection();
   $sql = $conn->prepare("SELECT api_id FROM `" . DB_PREFIX . "api` WHERE `key` = :key AND `status` = '1'");
   $sql->bindParam(':key', $key, PDO::PARAM_STR);
   $sql->execute();
   $api_info = $sql->fetch(PDO::FETCH_OBJ);
-  if (isset($api_info->api_id) && ctype_digit($api_info->api_id)) {
+  if (isset($api_info->api_id) && ctype_digit($api_info->api_id) || $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     if (RESTRICT_IP) {
       $sql = $conn->prepare("SELECT ip FROM `" . DB_PREFIX . "api_ip` WHERE `api_id` = :api_id AND `ip` = :ip");
       $sql->bindParam(':api_id', $api_info->api_id, PDO::PARAM_INT);
